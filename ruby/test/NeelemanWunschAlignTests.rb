@@ -4,8 +4,8 @@ require "../NeedlemanWunschAlign"
 
 class NeedlemanWunschAlignTest < Test::Unit::TestCase
     def test_normal
-        assert_equal NeedlemanWunschAlign.align("GATTACA","GCATGCU")[2], 0
-        assert_equal NeedlemanWunschAlign.align("abcde","abcde"), ["abcde", "abcde", 5]
+        assert_equal NeedlemanWunschAlign.new("GATTACA","GCATGCU").align[2], 0
+        assert_equal NeedlemanWunschAlign.new("abcde","abcde").align, ["abcde", "abcde", 5]
     end
 
     def test_multiple_results

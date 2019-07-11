@@ -1,50 +1,17 @@
 # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
 
 class NeedlemanWunschAlign
-
-    def self.align(a, b)
-        table = self.create_table(a, b)
-
-        # derive only 1 candidate
-        r = a.length
-        c = b.length
-        aling_a = ""
-        aling_b = ""
-
-        while r > 0 or c > 0 do
-            s = a[r-1] == b[c-1] ? 1 : -1
-
-            if r > 0 and c > 0 and table[r][c] == table[r-1][c-1] + s
-                aling_a+=(a[r-1])
-                aling_b+=(b[c-1])
-                r -= 1
-                c -= 1
-                next
-            end
-
-            if r > 0 and table[r][c] == table[r-1][c] - 1
-                aling_a+=(a[r-1])
-                aling_b+=("_")
-                r -= 1
-                next
-            end
-
-            aling_b+=(b[c-1])
-            aling_a+=("_")
-            c -= 1
-        end
-
-        return [aling_a.reverse, aling_b.reverse, table[a.length][b.length]]
-    end
-
-
-    include Enumerable
-
+    
     def initialize(a, b)
         @a = a
         @b = b
     end
 
+    def align
+        return each(&Proc.new{|i| return i}).first
+    end
+
+    include Enumerable
     def each(&block)
         table = NeedlemanWunschAlign.create_table(@a, @b)
         iterate(@a.length, @b.length, table, "", "", &block)
@@ -53,6 +20,7 @@ class NeedlemanWunschAlign
     private
 
         def iterate(r, c, table, aling_a, aling_b, &block)
+            p [r,c]
             if r == 0 and c == 0
                 yield [aling_a.reverse, aling_b.reverse, table[@a.length][@b.length]]
                 return
@@ -108,7 +76,6 @@ class NeedlemanWunschAlign
 
             return table
         end
-
 end
 
 if $0 == __FILE__
