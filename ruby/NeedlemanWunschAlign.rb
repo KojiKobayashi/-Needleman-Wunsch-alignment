@@ -2,9 +2,13 @@
 
 class NeedlemanWunschAlign
 
-    def initialize(a, b)
+    def initialize(a, b, sep='_')
+        raise ArgumentError.new("#{a} contains #{sep}") if a.include?(sep)
+        raise ArgumentError.new("#{b} contains #{sep}") if b.include?(sep)
+
         @a = a
         @b = b
+        @sep = sep
         @table = NeedlemanWunschAlign.create_table(@a, @b)
     end
 
@@ -32,11 +36,11 @@ class NeedlemanWunschAlign
             end
 
             if r > 0 and @table[r][c] == @table[r-1][c] - 1
-                iterate(r-1, c, aling_a+@a[r-1], aling_b+"_", &block)
+                iterate(r-1, c, aling_a+@a[r-1], aling_b+@sep, &block)
             end
 
             if c > 0 and @table[r][c] == @table[r][c-1] - 1
-                iterate(r,c-1, aling_a+"_", aling_b+@b[c-1], &block)
+                iterate(r,c-1, aling_a+@sep, aling_b+@b[c-1], &block)
             end
 
             return
