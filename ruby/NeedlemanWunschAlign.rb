@@ -1,6 +1,7 @@
 # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
 
 class NeedlemanWunschAlign
+    # Aling 2-strings by Needleman Wunsch algorithm.
 
     def initialize(a, b, sep='_')
         raise ArgumentError.new("#{a} contains #{sep}") if a.include?(sep)
@@ -13,6 +14,7 @@ class NeedlemanWunschAlign
     end
 
     def align
+        # @return [Array] best alignments and best score.
         return each(&Proc.new{|i| return i}).first
     end
 
@@ -77,5 +79,6 @@ end
 if $0 == __FILE__
     p("start")
     p NeedlemanWunschAlign.new("GATTACA","GCATGCU").align
-    p NeedlemanWunschAlign.new("abdce", "abdce").align
+    p NeedlemanWunschAlign.new("GATTACA","GCATGCU").map {|i| p i}
+    p NeedlemanWunschAlign.new("ab", "abc", '@').align
 end
