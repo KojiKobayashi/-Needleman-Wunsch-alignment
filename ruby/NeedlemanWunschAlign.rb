@@ -1,10 +1,11 @@
 # https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm
 
 class NeedlemanWunschAlign
-    
+
     def initialize(a, b)
         @a = a
         @b = b
+        @table = NeedlemanWunschAlign.create_table(@a, @b)
     end
 
     def align
@@ -13,38 +14,29 @@ class NeedlemanWunschAlign
 
     include Enumerable
     def each(&block)
-        table = NeedlemanWunschAlign.create_table(@a, @b)
-        iterate(@a.length, @b.length, table, "", "", &block)
+        iterate(@a.length, @b.length, "", "", &block)
     end
 
     private
 
-        def iterate(r, c, table, aling_a, aling_b, &block)
-            p [r,c]
+        def iterate(r, c, aling_a, aling_b, &block)
             if r == 0 and c == 0
-                yield [aling_a.reverse, aling_b.reverse, table[@a.length][@b.length]]
+                yield [aling_a.reverse, aling_b.reverse, @table[@a.length][@b.length]]
                 return
             end
 
             s = @a[r-1] == @b[c-1] ? 1 : -1
 
-            if r > 0 and c > 0 and table[r][c] == table[r-1][c-1] + s
-                iterate(r-1, c-1, table, aling_a+@a[r-1], aling_b+@b[c-1], &block)
+            if r > 0 and c > 0 and @table[r][c] == @table[r-1][c-1] + s
+                iterate(r-1, c-1, aling_a+@a[r-1], aling_b+@b[c-1], &block)
             end
 
-            if r > 0 and table[r][c] == table[r-1][c] - 1
-                # aling_a+=(a[r-1])
-                # aling_b+=("_")
-                # r -= 1
-                # next
-                iterate(r-1, c, table, aling_a+@a[r-1], aling_b+"_", &block)
+            if r > 0 and @table[r][c] == @table[r-1][c] - 1
+                iterate(r-1, c, aling_a+@a[r-1], aling_b+"_", &block)
             end
 
-            if c > 0 and table[r][c] == table[r][c-1] - 1
-                # aling_b+=(b[c-1])
-                # aling_a+=("_")
-                # c -= 1
-                iterate(r,c-1,table, aling_a+"_", aling_b+@b[c-1], &block)
+            if c > 0 and @table[r][c] == @table[r][c-1] - 1
+                iterate(r,c-1, aling_a+"_", aling_b+@b[c-1], &block)
             end
 
             return
@@ -80,6 +72,6 @@ end
 
 if $0 == __FILE__
     p("start")
-    p NeedlemanWunschAlign.align("GATTACA","GCATGCU")
-    p NeedlemanWunschAlign.align("abdce", "abdce")
+    p NeedlemanWunschAlign.new("GATTACA","GCATGCU").align
+    p NeedlemanWunschAlign.new("abdce", "abdce").align
 end
