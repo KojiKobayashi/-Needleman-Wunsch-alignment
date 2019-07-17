@@ -31,7 +31,7 @@ class NeedlemanWunschAlign
                 return
             end
 
-            s = @a[r-1] == @b[c-1] ? 1 : -1
+            s = r > 0 and c > 0 and @a[r-1] == @b[c-1] ? 1 : -1
 
             if r > 0 and c > 0 and @table[r][c] == @table[r-1][c-1] + s
                 iterate(r-1, c-1, aling_a+@a[r-1], aling_b+@b[c-1], &block)
