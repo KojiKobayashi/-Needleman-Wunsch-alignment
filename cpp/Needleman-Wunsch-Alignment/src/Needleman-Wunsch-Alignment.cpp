@@ -1,9 +1,27 @@
-﻿// Needleman-Wunsch-Alignment.cpp : アプリケーションのエントリ ポイントを定義します。
-//
+﻿#include "Needleman-Wunsch-Alignment.h"
 
-#include "Needleman-Wunsch-Alignment.h"
+#include <string>
+#include <list>
 
-int nwa()
+namespace  Alignment
 {
-	return 2;
+	int AlignResults::GetScore()
+	{
+		return 0;
+	}
+
+	int AlignResults::GetCandidateCount()
+	{
+		return 0;
+	}
+	
+	Strings AlignResults::GetStrings(int candidateIndex)
+	{
+		return Strings();
+	}
+
+	AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
+	{
+		return AlignResults();
+	}
 }
