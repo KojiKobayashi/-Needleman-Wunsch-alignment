@@ -1,30 +1,40 @@
 #include "Needleman-Wunsch-Alignment-Tests.h"
 #include "gtest/gtest.h"
 #include "Needleman-Wunsch-Alignment.h"
+using namespace Alignment;
 
-TEST(AlignTest, Score)
+namespace AlignmentTests
 {
-    auto ret = NeedlemanWunschAlign.Aling("GATTACA", "GCATGCU");
-    ASSERT_EQ(0, ret.Score);
+    TEST(AlignTest, Score)
+    {
+        auto ret = NeedlemanWunschAlignment::Align("GATTACA", "GCATGCU");
+        ASSERT_EQ(0, ret.GetScore());
 
-    ret = NeedlemanWunschAlign.Aling("abcde", "abcde");
-    ASSERT_EQ(5, ret.Score);
-}
+        ret = NeedlemanWunschAlignment::Align("abcde", "abcde");
+        ASSERT_EQ(5, ret.GetScore());
+    }
 
-TEST(AlignTest, ReturnString)
-{
-    auto ret = NeedlemanWunschAlign.Aling("abcde", "abcde");
-    ASSERT_EQ(1, ret.Candidates.size);
-    ASSERT_EQ(2, ret.Candidates[0].Str.size);
-    ASSERT_EQ("abcde", ret.Candidates[0].Str[0]);
-    ASSERT_EQ("abcde", ret.Candidates[0].Str[1]);
+    TEST(AlignTest, ReturnString)
+    {
+        auto ret = NeedlemanWunschAlignment::Align("abcde", "abcde");
+        ASSERT_EQ(1, ret.GetCandidateCount());
+        auto retStrings = ret.GetStrings(0);
+        ASSERT_EQ("abcde", retStrings.FirstString);
+        ASSERT_EQ("abcde", retStrings.SecondString);
 
-    auto ret = NeedlemanWunschAlign.Aling("GATTACA", "GCATGCU");
-    ASSERT_EQ(3, ret.Candidates.size);
-    ASSERT_EQ("G_ATTACA", ret.Candidates[0].Str[0]);
-    ASSERT_EQ("GCA_TGCU", ret.Candidates[0].Str[1]);
-    ASSERT_EQ("G_ATTACA", ret.Candidates[1].Str[0]);
-    ASSERT_EQ("GCAT_GCU", ret.Candidates[1].Str[1]);
-    ASSERT_EQ("G_ATTACA", ret.Candidates[2].Str[0]);
-    ASSERT_EQ("GCATG_CU", ret.Candidates[2].Str[1]);
+        ret = NeedlemanWunschAlignment::Align("GATTACA", "GCATGCU");
+        ASSERT_EQ(3, ret.GetCandidateCount());
+
+        retStrings = ret.GetStrings(0);
+        ASSERT_EQ("G_ATTACA", retStrings.FirstString);
+        ASSERT_EQ("GCA_TGCU", retStrings.FirstString);
+
+        retStrings = ret.GetStrings(1);
+        ASSERT_EQ("G_ATTACA", retStrings.FirstString);
+        ASSERT_EQ("GCAT_GCU", retStrings.FirstString);
+
+        retStrings = ret.GetStrings(2);
+        ASSERT_EQ("G_ATTACA", retStrings.FirstString);
+        ASSERT_EQ("GCATG_CU", retStrings.FirstString);
+    }
 }
