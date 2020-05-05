@@ -27,14 +27,14 @@ namespace AlignmentTests
 
         retStrings = ret.GetStrings(0);
         ASSERT_EQ("G_ATTACA", retStrings.FirstString);
-        ASSERT_EQ("GCA_TGCU", retStrings.FirstString);
+        ASSERT_EQ("GCA_TGCU", retStrings.SecondString);
 
         retStrings = ret.GetStrings(1);
         ASSERT_EQ("G_ATTACA", retStrings.FirstString);
-        ASSERT_EQ("GCAT_GCU", retStrings.FirstString);
+        ASSERT_EQ("GCAT_GCU", retStrings.SecondString);
 
         retStrings = ret.GetStrings(2);
         ASSERT_EQ("G_ATTACA", retStrings.FirstString);
-        ASSERT_EQ("GCATG_CU", retStrings.FirstString);
+        ASSERT_EQ("GCATG_CU", retStrings.SecondString);
     }
 }

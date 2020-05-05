@@ -41,9 +41,52 @@ namespace  Alignment
         return tmp;
     }
 
+    void NeedlemanWunschAlignment::iterate(
+        std::string first,
+        std::string second,
+        const char separator,
+        int** table,
+        AlignResults &results,
+        std::string::size_type r,
+        std::string::size_type c,
+        std::string alingA,
+        std::string alingB)
+    {
+        if (r == 0 && c == 0)
+        {
+            std::reverse(alingA.begin(), alingA.end());
+            std::reverse(alingB.begin(), alingB.end());
+            Strings tmp = Strings{ alingA, alingB };
+            results.AddStrings(tmp);
+            // TODO:1個ならここでbreak
+            return;
+        }
+
+        auto s = (r > 0 && c > 0 && first[r - 1] == second[c - 1]) ? 1 : -1;
+        if (r > 0 && c > 0 && table[r][c] == table[r - 1][c - 1] + s)
+        {
+            iterate(first, second, separator, table, results, r - 1, c - 1,
+                alingA + first[r - 1], alingB + second[c - 1]);
+        }
+
+        if (r > 0 && table[r][c] == table[r - 1][c] - 1)
+        {
+            iterate(first, second, separator, table, results, r - 1, c,
+                alingA + first[r - 1], alingB + separator);
+        }
+
+        if (c > 0 && table[r][c] == table[r][c - 1] - 1)
+        {
+            iterate(first, second, separator, table, results, r, c-1,
+                alingA + separator, alingB + second[c - 1]);
+        }
+
+        return;
+    }
+
     AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
     {
-        const auto separator = ' ';
+        const auto separator = '_';
 
         // create table
         const unsigned int rowSize = first.size() + 1U;
@@ -80,47 +123,7 @@ namespace  Alignment
         auto c = second.length();
         std::string alingA, alingB;
 
-        while (true)
-        {
-            if (r == 0 && c == 0)
-            {
-                std::reverse(alingA.begin(), alingA.end());
-                std::reverse(alingB.begin(), alingB.end());
-                Strings tmp = Strings{ alingA, alingB };
-                results.AddStrings(tmp);
-                // TODO:1個ならここでbreak
-                break;
-            }
-
-            auto s = (r > 0 && c > 0 && first[r - 1] == second[c - 1]) ? 1 : -1;
-            if (r > 0 && c > 0 && table[r][c] == table[r - 1][c - 1] + s)
-            {
-                alingA.push_back(first[r - 1]);
-                alingB.push_back(second[c - 1]);
-                r--;
-                c--;
-                continue;
-            }
-
-            if (r > 0 && table[r][c] == table[r - 1][c] - 1)
-            {
-                alingA.push_back(first[r - 1]);
-                alingB.push_back(separator);
-                r--;
-                continue;
-            }
-
-            if (c > 0 && table[r][c] == table[r][c - 1] - 1)
-            {
-                alingA.push_back(separator);
-                alingB.push_back(second[c - 1]);
-                c--;
-                continue;
-            }
-
-            // no search path
-            break;
-        }
+        iterate(first, second, separator, table, results, r, c, alingA, alingB);
 
         delete [] table;
         delete [] rawTable;

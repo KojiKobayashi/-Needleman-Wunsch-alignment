@@ -31,6 +31,9 @@ namespace  Alignment
 	class NeedlemanWunschAlignment
 	{
 	public:
+        static void iterate(std::string first, std::string second, char separator, int** table, AlignResults &results,
+                            std::string::size_type r, std::string::size_type c, std::string alingA, std::string alingB
+                            );
 		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second);
 	};
 }
