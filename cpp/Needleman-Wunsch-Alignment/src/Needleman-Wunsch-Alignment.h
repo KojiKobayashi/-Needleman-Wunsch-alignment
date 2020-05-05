@@ -4,7 +4,7 @@
 #pragma once
 
 #include <string>
-#include <list>
+#include <vector>
 
 namespace  Alignment
 {
@@ -16,8 +16,13 @@ namespace  Alignment
 	
 	class AlignResults
 	{
-		// int Score = 0;
+	private:
+		int score = 0;
+		std::vector<Strings> strings;
 	public:
+		AlignResults(int score);
+		AlignResults(std::vector<Strings> strings, int score);
+		void AddStrings(Strings strings);
 		int GetScore();
 		int GetCandidateCount();
 		Strings GetStrings(int candidateIndex);
