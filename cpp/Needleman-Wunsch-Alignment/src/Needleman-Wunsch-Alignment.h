@@ -1,7 +1,4 @@
-﻿// Needleman-Wunsch-Alignment.h : 標準のシステム インクルード ファイル用のインクルード ファイル、
-// または、プロジェクト専用のインクルード ファイル。
-
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <vector>
@@ -30,10 +27,6 @@ namespace  Alignment
 
 	class NeedlemanWunschAlignment
 	{
-	private:
-        static void iterate(std::string first, std::string second, char separator, int** table, AlignResults &results,
-                            std::string::size_type r, std::string::size_type c, std::string alingA, std::string alingB
-                            );
 	public:
 		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second);
 	};

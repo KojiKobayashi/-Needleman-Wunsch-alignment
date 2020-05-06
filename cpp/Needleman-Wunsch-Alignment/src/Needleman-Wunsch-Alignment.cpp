@@ -1,6 +1,4 @@
 ﻿#include "Needleman-Wunsch-Alignment.h"
-
-
 #include <algorithm>
 #include <string>
 #include <list>
@@ -40,95 +38,116 @@ namespace  Alignment
         return tmp;
     }
 
-    void NeedlemanWunschAlignment::iterate(
-        std::string first,
-        std::string second,
-        const char separator,
-        int** table,
-        AlignResults &results,
-        std::string::size_type r,
-        std::string::size_type c,
-        std::string alingA,
-        std::string alingB)
+    class Aligner
     {
-        if (r == 0 && c == 0)
+    private:
+        std::string first;
+        std::string second;
+        char separator;
+        int* rawTable = nullptr;
+        int** table = nullptr;
+
+    public:
+        Aligner(std::string &first, std::string &second, const char separator)
         {
-            std::reverse(alingA.begin(), alingA.end());
-            std::reverse(alingB.begin(), alingB.end());
-            Strings tmp = Strings{ alingA, alingB };
-            results.AddStrings(tmp);
-            // TODO:1個ならここでbreak
-            return;
+            this->first = first;
+            this->second = second;
+            this->separator = separator;
         }
 
-        auto s = (r > 0 && c > 0 && first[r - 1] == second[c - 1]) ? 1 : -1;
-        if (r > 0 && c > 0 && table[r][c] == table[r - 1][c - 1] + s)
+        AlignResults Align()
         {
-            iterate(first, second, separator, table, results, r - 1, c - 1,
-                alingA + first[r - 1], alingB + second[c - 1]);
-        }
+            std::list<Strings> stringsList;
+            const auto r = first.length();
+            const auto c = second.length();
+            const std::string alignA, alignB;
 
-        if (r > 0 && table[r][c] == table[r - 1][c] - 1)
-        {
-            iterate(first, second, separator, table, results, r - 1, c,
-                alingA + first[r - 1], alingB + separator);
-        }
-
-        if (c > 0 && table[r][c] == table[r][c - 1] - 1)
-        {
-            iterate(first, second, separator, table, results, r, c-1,
-                alingA + separator, alingB + second[c - 1]);
-        }
-
-        return;
-    }
-
-    AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
-    {
-        const auto separator = '_';
-
-        // create table
-        const unsigned int rowSize = first.size() + 1U;
-        const unsigned int colSize = second.size() + 1U;
-        auto *rawTable = new int[long long(colSize) * rowSize];
-        auto **table = new int* [rowSize];
-        for (auto i = 0U; i < rowSize; i++)
-            table[i] = rawTable + i * long long(colSize);
-
-        for (auto i = 0U; i < colSize; i++)
-            table[0][i] = -i;
-        for (auto i = 0U; i < rowSize; i++)
-            table[i][0] = -i;
-
-        for (auto j = 0U; j < rowSize-1U; j++)
-        {
-            for (auto i = 0U; i < colSize-1U; i++)
+            try
             {
-                auto scoreBottom = table[j][i + 1] - 1;
-                auto scoreRight = table[j + 1][i] - 1;
-                auto scoreDiagonal = table[j][i] - 1;
-                if (first[j] == second[i])
-                    scoreDiagonal += 2;
-                table[j + 1][i + 1] = std::max(scoreBottom, std::max(scoreRight, scoreDiagonal));
+                CreateTable();
+                AlignResults results(table[r][c]);
+                Iterate(r, c, alignA, alignB, results);
+
+                delete[] table;
+                delete[] rawTable;
+
+                return results;
+            }
+            catch (...)
+            {
+                delete[] table;
+                delete[] rawTable;
+                throw;
             }
         }
 
-        const auto score = table[rowSize - 1][colSize - 1];
-        auto results = AlignResults(score);
+    private:
+        void CreateTable()
+        {
+            // create table
+            const unsigned int rowSize = first.size() + 1U;
+            const unsigned int colSize = second.size() + 1U;
 
-        // run
-        std::list<Strings> stringsList;
-        auto r = first.length();
-        auto c = second.length();
-        std::string alingA, alingB;
+            rawTable = new int[long long(colSize) * rowSize];
+            table = new int* [rowSize];
+            for (auto i = 0U; i < rowSize; i++)
+                table[i] = rawTable + i * long long(colSize);
 
-        iterate(first, second, separator, table, results, r, c, alingA, alingB);
+            for (auto i = 0U; i < colSize; i++)
+                table[0][i] = -i;
+            for (auto i = 0U; i < rowSize; i++)
+                table[i][0] = -i;
 
-        delete [] table;
-        delete [] rawTable;
+            for (auto j = 0U; j < rowSize - 1U; j++)
+            {
+                for (auto i = 0U; i < colSize - 1U; i++)
+                {
+                    auto scoreBottom = table[j][i + 1] - 1;
+                    auto scoreRight = table[j + 1][i] - 1;
+                    auto scoreDiagonal = table[j][i] - 1;
+                    if (first[j] == second[i])
+                        scoreDiagonal += 2;
+                    table[j + 1][i + 1] = std::max(scoreBottom, std::max(scoreRight, scoreDiagonal));
+                }
+            }
+        }
 
-        return results;
+        void Iterate(const size_t r, const size_t c, std::string alignA, std::string alignB, AlignResults& results)
+        {
+            if (r == 0 && c == 0)
+            {
+                std::reverse(alignA.begin(), alignA.end());
+                std::reverse(alignB.begin(), alignB.end());
+                auto tmp = Strings{ alignA, alignB };
+                results.AddStrings(tmp);
+                // TODO:1個ならここでbreak
+                return;
+            }
+
+            if (r > 0 && c > 0)
+            {
+                const auto s = first[r - 1] == second[c - 1] ? 1 : -1;
+                if (table[r][c] == table[r - 1][c - 1] + s)
+                {
+                    Iterate(r - 1, c - 1, alignA + first[r - 1], alignB + second[c - 1], results);
+                }
+            }
+
+            if (r > 0 && table[r][c] == table[r - 1][c] - 1)
+            {
+                Iterate(r - 1, c, alignA + first[r - 1], alignB + separator, results);
+            }
+
+            if (c > 0 && table[r][c] == table[r][c - 1] - 1)
+            {
+                Iterate(r, c - 1, alignA + separator, alignB + second[c - 1], results);
+            }
+        }
+    };
+
+    AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
+    {
+        Aligner i(first, second, '_');
+        return i.Align();
     }
-
-
 }
