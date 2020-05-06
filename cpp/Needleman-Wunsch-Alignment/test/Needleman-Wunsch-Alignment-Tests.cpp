@@ -43,4 +43,13 @@ namespace AlignmentTests
         auto ret = NeedlemanWunschAlignment::AlignOnePair("GATTACA", "GCATGCU");
         ASSERT_EQ(1, ret.GetCandidateCount());
     }
+
+    TEST(AlignTest, Seperator)
+    {
+        auto ret = NeedlemanWunschAlignment::Align("abc", "abcd", ' ');
+        ASSERT_EQ("abc ", ret.GetStrings(0).FirstString);
+
+        ASSERT_THROW(NeedlemanWunschAlignment::Align("abc_", "abc", '_'), std::invalid_argument);
+        ASSERT_THROW(NeedlemanWunschAlignment::Align("abc", "abc_", '_'), std::invalid_argument);
+    }
 }

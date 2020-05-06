@@ -29,9 +29,9 @@ namespace  Alignment
 	class NeedlemanWunschAlignment
 	{
 	public:
-		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second);
+		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second, char separator = '_');
 
 		// faster but only one string pair
-		static AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second);
+		static AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second, char separator = '_');
 	};
 }

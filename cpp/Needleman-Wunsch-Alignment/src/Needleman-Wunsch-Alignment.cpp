@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <string>
 #include <list>
+#include <stdexcept>
 
 namespace  Alignment
 {
@@ -154,15 +155,21 @@ namespace  Alignment
         }
     };
 
-    AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
+    AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second, const char separator)
     {
-        Aligner i(first, second, '_');
+        if (first.find(separator) != std::string::npos || second.find(separator) != std::string::npos)
+            throw std::invalid_argument("string contains the separator.");
+
+        Aligner i(first, second, separator);
         return i.Align();
     }
 
-    AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second)
+    AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second, const char separator)
     {
-        Aligner i(first, second, '_', true);
+        if (first.find(separator) != std::string::npos || second.find(separator) != std::string::npos)
+            throw std::invalid_argument("string contains the separator.");
+
+        Aligner i(first, second, separator, true);
         return i.Align();
     }
 }
