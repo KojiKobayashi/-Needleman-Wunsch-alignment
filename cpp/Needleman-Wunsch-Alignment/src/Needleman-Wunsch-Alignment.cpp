@@ -4,38 +4,37 @@
 #include <algorithm>
 #include <string>
 #include <list>
-//#include <minwindef.h>
 
 namespace  Alignment
 {
-    AlignResults::AlignResults(int score)
+    AlignResults::AlignResults(const int score)
     {
         this->score = score;
         this->strings = std::vector<Strings>();
     }
 
-    AlignResults::AlignResults(std::vector<Strings> strings, int score)
+    AlignResults::AlignResults(std::vector<Strings> &strings, const int score)
     {
         this->score = score;
         this->strings = std::vector<Strings>{ strings };
     }
 
-    void AlignResults::AddStrings(Strings strings)
+    void AlignResults::AddStrings(Strings &strings)
     {
         this->strings.push_back(strings);
     }
 
-    int AlignResults::GetScore()
+    int AlignResults::GetScore() const
     {
         return score;
     }
 
-    int AlignResults::GetCandidateCount()
+    int AlignResults::GetCandidateCount() const
     {
         return strings.size();
     }
 
-    Strings AlignResults::GetStrings(int candidateIndex)
+    Strings AlignResults::GetStrings(const int candidateIndex) const
     {
         auto tmp = strings.at(candidateIndex);
         return tmp;

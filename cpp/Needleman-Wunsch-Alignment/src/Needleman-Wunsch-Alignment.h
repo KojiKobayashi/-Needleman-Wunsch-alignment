@@ -21,19 +21,20 @@ namespace  Alignment
 		std::vector<Strings> strings;
 	public:
 		AlignResults(int score);
-		AlignResults(std::vector<Strings> strings, int score);
-		void AddStrings(Strings strings);
-		int GetScore();
-		int GetCandidateCount();
-		Strings GetStrings(int candidateIndex);
+		AlignResults(std::vector<Strings> &strings, int score);
+		void AddStrings(Strings &strings);
+		int GetScore() const;
+		int GetCandidateCount() const;
+		Strings GetStrings(int candidateIndex) const;
 	};
 
 	class NeedlemanWunschAlignment
 	{
-	public:
+	private:
         static void iterate(std::string first, std::string second, char separator, int** table, AlignResults &results,
                             std::string::size_type r, std::string::size_type c, std::string alingA, std::string alingB
                             );
+	public:
 		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second);
 	};
 }
