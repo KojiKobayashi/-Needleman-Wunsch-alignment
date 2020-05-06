@@ -37,4 +37,10 @@ namespace AlignmentTests
         ASSERT_EQ("G_ATTACA", retStrings.FirstString);
         ASSERT_EQ("GCATG_CU", retStrings.SecondString);
     }
+
+    TEST(AlignTest, ReturnOnePairString)
+    {
+        auto ret = NeedlemanWunschAlignment::AlignOnePair("GATTACA", "GCATGCU");
+        ASSERT_EQ(1, ret.GetCandidateCount());
+    }
 }

@@ -44,15 +44,17 @@ namespace  Alignment
         std::string first;
         std::string second;
         char separator;
+        bool onlyOnePair;
         int* rawTable = nullptr;
         int** table = nullptr;
 
     public:
-        Aligner(std::string &first, std::string &second, const char separator)
+        Aligner(std::string &first, std::string &second, const char separator, const bool onlyOnePair = false)
         {
             this->first = first;
             this->second = second;
             this->separator = separator;
+            this->onlyOnePair = onlyOnePair;
         }
 
         AlignResults Align()
@@ -112,7 +114,7 @@ namespace  Alignment
             }
         }
 
-        void Iterate(const size_t r, const size_t c, std::string alignA, std::string alignB, AlignResults& results)
+        bool Iterate(const size_t r, const size_t c, std::string alignA, std::string alignB, AlignResults& results)
         {
             if (r == 0 && c == 0)
             {
@@ -120,8 +122,10 @@ namespace  Alignment
                 std::reverse(alignB.begin(), alignB.end());
                 auto tmp = Strings{ alignA, alignB };
                 results.AddStrings(tmp);
-                // TODO:1個ならここでbreak
-                return;
+                if (onlyOnePair)
+                    return true;
+                else
+                    return false;
             }
 
             if (r > 0 && c > 0)
@@ -129,25 +133,36 @@ namespace  Alignment
                 const auto s = first[r - 1] == second[c - 1] ? 1 : -1;
                 if (table[r][c] == table[r - 1][c - 1] + s)
                 {
-                    Iterate(r - 1, c - 1, alignA + first[r - 1], alignB + second[c - 1], results);
+                    if (Iterate(r - 1, c - 1, alignA + first[r - 1], alignB + second[c - 1], results))
+                        return true;
                 }
             }
 
             if (r > 0 && table[r][c] == table[r - 1][c] - 1)
             {
-                Iterate(r - 1, c, alignA + first[r - 1], alignB + separator, results);
+                if (Iterate(r - 1, c, alignA + first[r - 1], alignB + separator, results))
+                    return true;
             }
 
             if (c > 0 && table[r][c] == table[r][c - 1] - 1)
             {
-                Iterate(r, c - 1, alignA + separator, alignB + second[c - 1], results);
+                if (Iterate(r, c - 1, alignA + separator, alignB + second[c - 1], results))
+                    return true;
             }
+
+            return false;
         }
     };
 
     AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second)
     {
         Aligner i(first, second, '_');
+        return i.Align();
+    }
+
+    AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second)
+    {
+        Aligner i(first, second, '_', true);
         return i.Align();
     }
 }

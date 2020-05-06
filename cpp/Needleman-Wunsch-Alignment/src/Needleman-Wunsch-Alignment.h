@@ -19,6 +19,7 @@ namespace  Alignment
 	public:
 		AlignResults(int score);
 		AlignResults(std::vector<Strings> &strings, int score);
+
 		void AddStrings(Strings &strings);
 		int GetScore() const;
 		int GetCandidateCount() const;
@@ -29,5 +30,8 @@ namespace  Alignment
 	{
 	public:
 		static AlignResults NeedlemanWunschAlignment::Align(std::string first, std::string second);
+
+		// faster but only one string pair
+		static AlignResults NeedlemanWunschAlignment::AlignOnePair(std::string first, std::string second);
 	};
 }
