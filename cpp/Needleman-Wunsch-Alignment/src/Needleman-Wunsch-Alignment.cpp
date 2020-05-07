@@ -71,15 +71,12 @@ namespace  Alignment
                 AlignResults results(table[r][c]);
                 Iterate(r, c, alignA, alignB, results);
 
-                delete[] table;
-                delete[] rawTable;
-
+                DeleteTable();
                 return results;
             }
             catch (...)
             {
-                delete[] table;
-                delete[] rawTable;
+                DeleteTable();
                 throw;
             }
         }
@@ -113,6 +110,12 @@ namespace  Alignment
                     table[j + 1][i + 1] = std::max(scoreBottom, std::max(scoreRight, scoreDiagonal));
                 }
             }
+        }
+
+        void DeleteTable()
+        {
+            delete[] rawTable;
+            delete[] table;
         }
 
         bool Iterate(const size_t r, const size_t c, std::string alignA, std::string alignB, AlignResults& results)
