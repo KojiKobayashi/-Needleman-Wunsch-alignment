@@ -52,4 +52,15 @@ namespace AlignmentTests
         ASSERT_THROW(NeedlemanWunschAlignment::Align("abc_", "abc", '_'), std::invalid_argument);
         ASSERT_THROW(NeedlemanWunschAlignment::Align("abc", "abc_", '_'), std::invalid_argument);
     }
+
+    TEST(AlignTest, GetStrings)
+    {
+        auto ret = NeedlemanWunschAlignment::Align("GATTACA", "GCATGCU");
+        ASSERT_EQ(3, ret.GetCandidateCount());
+
+        ASSERT_THROW(ret.GetStrings(-1), std::out_of_range);
+        ASSERT_NO_THROW(ret.GetStrings(0));
+        ASSERT_NO_THROW(ret.GetStrings(2));
+        ASSERT_THROW(ret.GetStrings(3), std::out_of_range);
+    }
 }
