@@ -4,7 +4,7 @@
 #include <list>
 #include <stdexcept>
 
-namespace  Alignment
+namespace Alignment
 {
     AlignResults::AlignResults(const int score)
     {
@@ -12,13 +12,13 @@ namespace  Alignment
         this->strings = std::vector<AlignedStrings>();
     }
 
-    AlignResults::AlignResults(std::vector<AlignedStrings> &strings, const int score)
+    AlignResults::AlignResults(std::vector<AlignedStrings>& strings, const int score)
     {
         this->score = score;
         this->strings = std::vector<AlignedStrings>{ strings };
     }
 
-    void AlignResults::AddStrings(AlignedStrings &strings)
+    void AlignResults::AddStrings(AlignedStrings& strings)
     {
         this->strings.push_back(strings);
     }
@@ -50,7 +50,7 @@ namespace  Alignment
         int** table = nullptr;
 
     public:
-        Aligner(std::string &first, std::string &second, const char separator, const bool onlyOnePair = false)
+        Aligner(std::string& first, std::string& second, const char separator, const bool onlyOnePair = false)
         {
             this->first = first;
             this->second = second;
