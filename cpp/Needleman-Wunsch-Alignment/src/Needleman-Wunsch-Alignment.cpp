@@ -9,16 +9,16 @@ namespace  Alignment
     AlignResults::AlignResults(const int score)
     {
         this->score = score;
-        this->strings = std::vector<Strings>();
+        this->strings = std::vector<AlignedStrings>();
     }
 
-    AlignResults::AlignResults(std::vector<Strings> &strings, const int score)
+    AlignResults::AlignResults(std::vector<AlignedStrings> &strings, const int score)
     {
         this->score = score;
-        this->strings = std::vector<Strings>{ strings };
+        this->strings = std::vector<AlignedStrings>{ strings };
     }
 
-    void AlignResults::AddStrings(Strings &strings)
+    void AlignResults::AddStrings(AlignedStrings &strings)
     {
         this->strings.push_back(strings);
     }
@@ -30,10 +30,10 @@ namespace  Alignment
 
     int AlignResults::GetCandidateCount() const
     {
-        return strings.size();
+        return static_cast<int>(strings.size());
     }
 
-    Strings AlignResults::GetStrings(const int candidateIndex) const
+    AlignedStrings AlignResults::GetStrings(const int candidateIndex) const
     {
         auto tmp = strings.at(candidateIndex);
         return tmp;
@@ -60,7 +60,7 @@ namespace  Alignment
 
         AlignResults Align()
         {
-            std::list<Strings> stringsList;
+            std::list<AlignedStrings> stringsList;
             const auto r = first.length();
             const auto c = second.length();
             const std::string alignA, alignB;
@@ -85,22 +85,22 @@ namespace  Alignment
         void CreateTable()
         {
             // create table
-            const unsigned int rowSize = first.size() + 1U;
-            const unsigned int colSize = second.size() + 1U;
+            const auto rowSize = static_cast<long long>(first.size()) + 1;
+            const auto colSize = static_cast<long long>(second.size()) + 1;
 
-            rawTable = new int[long long(colSize) * rowSize];
+            rawTable = new int[colSize * rowSize];
             table = new int* [rowSize];
-            for (auto i = 0U; i < rowSize; i++)
-                table[i] = rawTable + i * long long(colSize);
+            for (auto i = 0; i < rowSize; i++)
+                table[i] = rawTable + i * colSize;
 
-            for (auto i = 0U; i < colSize; i++)
+            for (auto i = 0; i < colSize; i++)
                 table[0][i] = -i;
-            for (auto i = 0U; i < rowSize; i++)
+            for (auto i = 0; i < rowSize; i++)
                 table[i][0] = -i;
 
-            for (auto j = 0U; j < rowSize - 1U; j++)
+            for (auto j = 0; j < rowSize - 1; j++)
             {
-                for (auto i = 0U; i < colSize - 1U; i++)
+                for (auto i = 0; i < colSize - 1; i++)
                 {
                     auto scoreBottom = table[j][i + 1] - 1;
                     auto scoreRight = table[j + 1][i] - 1;
@@ -124,7 +124,7 @@ namespace  Alignment
             {
                 std::reverse(alignA.begin(), alignA.end());
                 std::reverse(alignB.begin(), alignB.end());
-                auto tmp = Strings{ alignA, alignB };
+                auto tmp = AlignedStrings{ alignA, alignB };
                 results.AddStrings(tmp);
                 if (onlyOnePair)
                     return true;
